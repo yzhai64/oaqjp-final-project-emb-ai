@@ -1,21 +1,30 @@
+"""
+Flask Web Application for Emotion Detection.
+"""
+
 from flask import Flask, request, render_template
 from EmotionDetection import emotion_detector
 
-app = Flask(__name__)  # 默认从 templates/ 和 static/ 提取文件
+app = Flask(__name__)
 
 @app.route('/')
 def home():
+    """
+    Render the main page with input form.
+    """
     return render_template('index.html')
 
-@app.route('/emotionDetector', methods=['POST'])  # ✅ 注意路径名要求
+@app.route('/emotionDetector', methods=['POST'])
 def analyze_emotion():
+    """
+    Handle POST request, analyze emotion, and return formatted result.
+    """
     text = request.form['text']
     result = emotion_detector(text)
 
-    if 'error' in result:
-        return f"Error occurred: {result['error']}"
+    if result['dominant_emotion'] is None:
+        return "Invalid text! Please try again!"
 
-    # ✅ 格式化输出结果
     response_string = (
         f"For the given statement, the system response is "
         f"'anger': {result['anger']}, "
